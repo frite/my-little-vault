@@ -26,12 +26,13 @@ class MySQL_Connection{
 	 *
 	 *------------------------*/
 	public function connect(){
-		$this->connection=mysql_connect($this->host,$this->username,$this->pass) or $this->setErrors('could not connect to host, due to '.mysql_error());	
-		mysql_select_db($this->database) or $this->setErrors('could not select DB, due to '.mysql_error());
-		mysql_query('SET NAMES UTF8');
+		$this->connection=mysqli_connect($this->host,$this->username,$this->pass) or $this->setErrors('could not connect to host, due to '.mysqli_error());	
+		mysqli_select_db($this->connection, $this->database) or $this->setErrors('could not select DB, due to '.mysqli_error());
+		mysqli_query('SET NAMES UTF8');
 	}
+	
 	public function disconnect(){
-			mysql_close($this->connection) or $this->setErrors('couldn\'t not close connection due to '.mysql_error());
+			mysqli_close($this->connection) or $this->setErrors('couldn\'t not close connection due to '.mysqli_error());
 	}
 	/*------------------------*
 	 *
@@ -102,14 +103,14 @@ class MySQL_Connection{
 	
 	
 	public function execute(){
-		$this->result=mysql_query($this->query) or $this->setErrors('couldn\'t execute query due to'.mysql_error().' . Query was "'.$this->query.'"');
+		$this->result=mysqli_query($this->connection, $this->query) or $this->setErrors('couldn\'t execute query due to'.mysqli_error().' . Query was "'.$this->query.'"');
 	}
 	
 	public function numResults(){
-		$this->numResults=mysql_num_rows($this->result) or $this->setErrors('couldn\'t numResults due to'.mysql_error().' . Query was "'.$this->query.'"');
+		$this->numResults=mysqli_num_rows($this->result) or $this->setErrors('couldn\'t numResults due to'.mysqli_error().' . Query was "'.$this->query.'"');
 	}
 	public function fetchResults(){
-		while($arr=mysql_fetch_array($this->result))
+		while($arr=mysqli_fetch_array($this->result))
 			array_push($this->fetchedResults,$arr);	
 	}
 
